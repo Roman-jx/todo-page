@@ -1,0 +1,48 @@
+version: '3'
+services:
+  apache:
+    image: httpd
+    container_name: todo
+    volumes:
+      - './html:/usr/local/apache2/htdocs'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ser.rule=Host(`todo.localhost`)"
+      - "traefik.http.services.ser.loadbalancer.server.port=80"
+  db:
+    image: mysql
+    container_name: todo_sql
+    volumes:
+      - "~/var/lib/mysql"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD: ${DB_PASSWORD_ROOT}
+      - MYSQL_DATABASE: ${DB_DATABASE}
+      - MYSQL_USER: ${DB_USERNAME}
+      - MYSQL_PASSWORD: ${DB_PASSWORD}
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: todo_phpmyadmin
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    labels:
+      - "traefik.http.routers.todo_pma.rule=Host(`pma.todo.localhost`)"
+      - "traefik.http.services.todo_pma.loadbalancer.server.port=80"
+  traefik:
+    image: "traefik:v2.6"
+    container_name: "todo-traefik"
+    command:
+    - --log.level=INFO
+    - --api.insecure=true
+    - --entrypoints.web.address=:80
+    - --providers.docker
+    volumes:
+      - ~/var/run/docker.sock
+    ports:
+      - "8080:8080"
+      - "80:80"
