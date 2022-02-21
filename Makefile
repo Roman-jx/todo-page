@@ -1,9 +1,20 @@
 include .env
+.PHONY: up down stop start help
+default: up
 up:
-	docker-compose -f docker-compose.yml build
+	@echo "Start container for $(PROJECT_NAME)"
+	@echo "Just wait..."
+	docker-compose pull
+	docker-compose up -d --remove-orphans
 down:
-	docker-compose -f docker-compose.yml down
+	stop
 stop:
-	docker-compose -f docker-compose.yml stop
+	@echo "Stop container for $(PROJECT_NAME)..."
+	@echo "Just wait..."
+	@docker-compose stop
 start:
-	docker-compose -f docker-compose.yml start
+	@echo "Start container for $(PROJECT_NAME) from where you left off..."
+	@echo "Just wait..."
+	@docker-compose start
+help:
+	@sed -n 's/^##//p' $<

@@ -1,10 +1,12 @@
 version: '3'
 services:
-  apache:
-    image: httpd
+  server:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     container_name: todo
     volumes:
-      - './html:/usr/local/apache2/htdocs'
+      - './src:/var/www/html'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ser.rule=Host(`todo.localhost`)"
@@ -13,7 +15,7 @@ services:
     image: mysql
     container_name: todo_sql
     volumes:
-      - "~/var/lib/mysql"
+      - "./.todo-data/db:/var/lib/mysql"
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD: ${DB_PASSWORD_ROOT}
@@ -39,10 +41,9 @@ services:
     command:
     - --log.level=INFO
     - --api.insecure=true
-    - --entrypoints.web.address=:80
     - --providers.docker
     volumes:
-      - ~/var/run/docker.sock
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     ports:
       - "8080:8080"
       - "80:80"
