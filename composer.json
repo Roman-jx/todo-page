@@ -1,0 +1,19 @@
+{
+    "name": "roman/todo-page_homework",
+    "description": "Project for composer...",
+    "type": "project",
+    "require": {
+        "monolog/monolog": "^2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Roman\\TodoPageHomework\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Malkevich Roman",
+            "email": "pomannero52@gmail.com"
+        }
+    ]
+}
