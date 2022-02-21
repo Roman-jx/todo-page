@@ -1,4 +1,5 @@
 include .env
+THIS_FILE := $(lastword $(MAKEFILE_LIST))
 .PHONY: up down stop start help
 default: up
 up:

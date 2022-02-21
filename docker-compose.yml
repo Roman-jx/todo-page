@@ -4,16 +4,16 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: todo
+    container_name: server
     volumes:
       - './src:/var/www/html'
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ser.rule=Host(`todo.localhost`)"
-      - "traefik.http.services.ser.loadbalancer.server.port=80"
+      - "traefik.http.routers.server.rule=Host(`${PROJECT_BASE_URL}`)"
+      - "traefik.http.services.server.loadbalancer.server.port=80"
   db:
     image: mysql
-    container_name: todo_sql
+    container_name: db
     volumes:
       - "./.todo-data/db:/var/lib/mysql"
     restart: always
@@ -33,7 +33,7 @@ services:
       PMA_ARBITRARY: 1
     restart: always
     labels:
-      - "traefik.http.routers.todo_pma.rule=Host(`pma.todo.localhost`)"
+      - "traefik.http.routers.todo_pma.rule=Host(`${PROJECT_BASE_URL}`)"
       - "traefik.http.services.todo_pma.loadbalancer.server.port=80"
   traefik:
     image: "traefik:v2.6"
